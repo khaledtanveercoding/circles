@@ -1,45 +1,53 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import "./App.css";
+import { useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
+    const [points, setPoints] = useState([]);
+    const [deletedPoints, setDeletedPoints] = useState([]);
+    const handleClick = (event) => {
+        return setPoints([
+            ...points,
+            {
+                x: event.clientX,
+                y: event.clientY,
+            },
+        ]);
+    };
+    const handleUndo = () => {
+        setDeletedPoints([...deletedPoints, points.pop()]);
+        setPoints([...points]);
+    };
+    const handleRedo = () => {
+        if (deletedPoints.length > 0) {
+            setPoints([...points, deletedPoints.pop()]);
+            setDeletedPoints([...deletedPoints]);
+        }
+    };
+    return (
+        <div className="App">
+            <div>
+                <button type="button" onClick={handleUndo}>
+                    Undo
+                </button>
+                <button type="button" onClick={handleRedo}>
+                    Redo
+                </button>
+            </div>
+            <div className="area" onClick={handleClick}>
+                {points.map((point, index) => {
+                    if (point) {
+                        return (
+                            <div
+                                key={index}
+                                className="point"
+                                style={{ top: point.y, left: point.x }}
+                            />
+                        );
+                    }
+                })}
+            </div>
+        </div>
+    );
 }
 
-export default App
+export default App;
